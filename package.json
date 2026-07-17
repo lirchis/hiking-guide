@@ -1,10 +1,12 @@
 {
   "name": "hiking-guide",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "scripts": {
     "start": "python3 -m http.server 4176",
-    "check": "node --check src/main.js"
+    "check": "npm run check:js && npm run check:data",
+    "check:js": "node --check src/main.js",
+    "check:data": "node scripts/validate-data.js"
   }
 }

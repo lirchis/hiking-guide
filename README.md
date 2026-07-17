@@ -1,18 +1,32 @@
-# Hiking Guide
+# 山野路线探索器 · Hiking Guide
 
-一个数据驱动的徒步路线大全与规划工具，目标是让路线信息更容易搜索、比较、维护和复用。
+一个纯静态、数据驱动的徒步路线目录。路线价值和当前可走性分开呈现，帮助用户先比较景观、强度与季节，再核对开放、报备和客观风险。
 
-## 当前状态
+## 当前进度
 
-仓库已完成第一版基础初始化：
+首个内容里程碑完成 **50 / 100 条路线**：
 
-- 无框架静态前端，可直接在浏览器运行
-- 路线搜索与难度筛选骨架
-- 独立的路线数据文件
-- JSON Schema 数据约束
-- MVP 产品范围与迭代计划
+- 广东及周边 32 条
+- 全国精选前 18 条
+- 关键词、区域、难度和当前状态筛选
+- 路线质量、景观评分、距离与季节排序
+- 路线详情和安全提醒弹窗
+- URL 筛选状态，可复制当前筛选结果
+- GitHub Pages 自动部署工作流
 
-当前 `data/trails.json` 为空；后续录入路线时，请优先确保来源、更新时间和关键指标可核验。
+路线资料首批整理自[《山野路线探索器｜100条徒步路线精选（2026）》](https://my.feishu.cn/docx/HoFBdHWPKoBTwXx1S7BcXwG3nod)，数据版本为 2026-07-15。
+
+## 技术约束
+
+网站只使用 HTML、CSS、JavaScript 和 JSON：
+
+- 无框架
+- 无第三方运行时依赖
+- 无服务端和数据库
+- 无构建步骤
+- 所有路径均为相对路径，可部署在 GitHub Pages 的 `/hiking-guide/` 子路径
+
+`package.json` 只提供本地预览和数据校验命令，不参与线上运行。
 
 ## 本地运行
 
@@ -20,41 +34,55 @@
 npm run start
 ```
 
-然后打开 <http://localhost:4176>。
+打开 <http://localhost:4176>。
 
-代码语法检查：
+运行语法和路线数据校验：
 
 ```bash
 npm run check
 ```
 
+## 发布到 GitHub Pages
+
+仓库包含 `.github/workflows/pages.yml`。合并到 `main` 后：
+
+1. 打开仓库的 **Settings → Pages**。
+2. 将 **Source** 设为 **GitHub Actions**。
+3. 手动运行一次 `Deploy static content to Pages`，或向 `main` 推送提交。
+4. 部署完成后访问 `https://lirchis.github.io/hiking-guide/`。
+
+GitHub Free 通常要求 Pages 源仓库为公开仓库；若继续使用私有仓库，需要支持私有 Pages 的 GitHub 计划。
+
 ## 目录结构
 
 ```text
 .
+├── .github/workflows/pages.yml
 ├── data
 │   ├── trails.json
 │   └── trails.schema.json
-├── docs
-│   └── PRODUCT.md
+├── docs/PRODUCT.md
+├── scripts/validate-data.js
 ├── src
 │   ├── main.js
 │   └── styles.css
+├── .nojekyll
 ├── index.html
 └── package.json
 ```
 
-## 路线数据原则
+## 状态口径
 
-- 一条路线使用稳定且可读的 `id`。
-- 距离、爬升和预计时长使用统一单位。
-- 难度不是单一主观标签，应结合距离、爬升、路况和补给条件说明。
-- 外部路线必须记录来源；GPX 文件需确认授权和使用范围。
-- 对路线安全、封闭、天气和交通信息标注更新时间，避免把历史信息当作实时状态。
+- `available`：可纳入计划，但仍需在出发前复核。
+- `verify`：开放边界、许可或现场条件需要先确认。
+- `reference`：经典路线资料收录，不进入当前行程。
+- `closed`：明确关闭或禁止穿越。
 
-## 下一步
+路线质量高不代表现在可走；第三方轨迹也不能证明一条路线被允许进入。
 
-1. 确定首批覆盖区域与路线收录标准。
-2. 录入一小批经过核验的种子路线。
-3. 增加路线详情页、地图和 GPX 展示。
-4. 增加路线投稿、审核与版本记录。
+## 下一阶段
+
+1. 录入剩余 50 条全国与全球路线。
+2. 为路线补充官方来源链接和独立核验日期。
+3. 增加地图、起点、GPX 和海拔剖面。
+4. 增加信息过期提醒和变更记录。
