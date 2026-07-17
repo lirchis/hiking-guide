@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="高山与雪峰路线插画">
-  <defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#c9dfe3"/><stop offset="1" stop-color="#f4e8cf"/></linearGradient></defs>
-  <rect width="640" height="360" fill="url(#sky)"/>
-  <path d="M-30 285 126 86l69 75 105-136 98 126 62-70 205 218v61H-30z" fill="#708a87"/>
-  <path d="m126 86 69 75-41 14-29-23-32 17zM300 25l98 126-54-24-34 20-30-42-43 13zM460 81l99 105-57-24-37 24-32-45-31 4z" fill="#f4f6ee"/>
-  <path d="M-20 318 116 189l88 72 103-107 83 96 75-54 185 109v55H-20z" fill="#365d52"/>
-  <path d="M56 326c69-33 130-8 184-28 57-22 76-83 133-86 39-3 62 33 108 37" fill="none" stroke="#efd176" stroke-width="7" stroke-linecap="round" stroke-dasharray="1 18"/>
-  <circle cx="526" cy="55" r="24" fill="#e3bd62" opacity=".78"/>
-</svg>

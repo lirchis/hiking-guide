@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="峰林与峡谷路线插画">
-  <defs><linearGradient id="mist" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#ebefe2"/><stop offset="1" stop-color="#b9cdb7"/></linearGradient></defs>
-  <rect width="640" height="360" fill="url(#mist)"/>
-  <path d="M0 277c58-14 71-68 105-131 23-42 50-60 72-1 26 69 42 93 77 116 25 17 47-6 78-102 29-89 67-119 93 2 20 93 46 108 76 78 34-35 41-110 75-121 36-12 30 103 64 132v110H0z" fill="#557862"/>
-  <path d="M0 302c61-11 97-63 133-62 42 2 44 64 104 67 62 3 72-64 122-62 44 2 60 70 113 57 45-11 69-48 88-31 28 25 46 42 80 45v44H0z" fill="#234d3d"/>
-  <path d="M0 322c102-12 156 5 225 9 74 5 107-20 187-10 79 10 133 22 228 4v35H0z" fill="#6aa39a"/>
-  <path d="M85 299c81-5 123 32 197 15 59-13 84-55 147-42 47 10 67 41 129 34" fill="none" stroke="#f2ce72" stroke-width="6" stroke-linecap="round" stroke-dasharray="1 17"/>
-  <circle cx="85" cy="80" r="25" fill="#d9b95c" opacity=".75"/>
-</svg>
