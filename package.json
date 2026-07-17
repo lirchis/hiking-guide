@@ -1,0 +1,10 @@
+{
+  "name": "hiking-guide",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "python3 -m http.server 4176",
+    "check": "node --check src/main.js"
+  }
+}

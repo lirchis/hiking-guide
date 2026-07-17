@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/lirchis/hiking-guide/data/trails.schema.json",
+  "title": "Hiking Guide trails",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "id",
+      "name",
+      "region",
+      "distanceKm",
+      "elevationGainM",
+      "durationHours",
+      "difficulty",
+      "routeType",
+      "summary",
+      "source",
+      "updatedAt"
+    ],
+    "properties": {
+      "id": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      },
+      "name": { "type": "string", "minLength": 1 },
+      "region": { "type": "string", "minLength": 1 },
+      "location": { "type": "string" },
+      "summary": { "type": "string", "minLength": 1 },
+      "distanceKm": { "type": "number", "minimum": 0 },
+      "elevationGainM": { "type": "number", "minimum": 0 },
+      "durationHours": { "type": "number", "exclusiveMinimum": 0 },
+      "difficulty": {
+        "enum": ["easy", "moderate", "hard", "expert"]
+      },
+      "routeType": {
+        "enum": ["loop", "out-and-back", "point-to-point"]
+      },
+      "start": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["latitude", "longitude"],
+        "properties": {
+          "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+          "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
+        }
+      },
+      "tags": {
+        "type": "array",
+        "items": { "type": "string", "minLength": 1 },
+        "uniqueItems": true
+      },
+      "seasons": {
+        "type": "array",
+        "items": {
+          "enum": ["spring", "summer", "autumn", "winter"]
+        },
+        "uniqueItems": true
+      },
+      "gpx": { "type": "string" },
+      "source": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "url"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "url": { "type": "string", "format": "uri" }
+        }
+      },
+      "updatedAt": {
+        "type": "string",
+        "format": "date"
+      }
+    }
+  }
+}
