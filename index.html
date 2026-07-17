@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Hiking Guide：可搜索、可比较的徒步路线大全。"
+    />
+    <title>Hiking Guide · 徒步大全</title>
+    <link rel="stylesheet" href="./src/styles.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <div class="hero__content">
+        <p class="eyebrow">HIKING GUIDE</p>
+        <h1>找到下一条值得走的路线</h1>
+        <p class="hero__summary">
+          汇总距离、爬升、时长、难度和季节信息，让路线选择有据可依。
+        </p>
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <section class="toolbar" aria-label="路线筛选">
+        <label>
+          <span>搜索路线</span>
+          <input
+            id="search-input"
+            type="search"
+            placeholder="名称、地区或标签"
+            autocomplete="off"
+          />
+        </label>
+
+        <label>
+          <span>难度</span>
+          <select id="difficulty-filter">
+            <option value="all">全部难度</option>
+            <option value="easy">轻松</option>
+            <option value="moderate">适中</option>
+            <option value="hard">困难</option>
+            <option value="expert">专家</option>
+          </select>
+        </label>
+      </section>
+
+      <section class="results-heading" aria-live="polite">
+        <div>
+          <p class="eyebrow">ROUTES</p>
+          <h2>路线列表</h2>
+        </div>
+        <p id="route-count">正在加载路线…</p>
+      </section>
+
+      <section id="route-list" class="route-grid" aria-label="徒步路线"></section>
+      <section id="empty-state" class="empty-state" hidden>
+        <p class="empty-state__icon" aria-hidden="true">△</p>
+        <h2>还没有符合条件的路线</h2>
+        <p>路线数据会从 <code>data/trails.json</code> 加载。</p>
+      </section>
+    </main>
+
+    <template id="route-card-template">
+      <article class="route-card">
+        <div class="route-card__header">
+          <div>
+            <p class="route-card__region"></p>
+            <h3 class="route-card__name"></h3>
+          </div>
+          <span class="difficulty-badge"></span>
+        </div>
+        <p class="route-card__summary"></p>
+        <dl class="route-card__metrics">
+          <div><dt>距离</dt><dd data-field="distance"></dd></div>
+          <div><dt>爬升</dt><dd data-field="elevation"></dd></div>
+          <div><dt>时长</dt><dd data-field="duration"></dd></div>
+        </dl>
+        <ul class="route-card__tags" aria-label="路线标签"></ul>
+      </article>
+    </template>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
