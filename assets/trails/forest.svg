@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="森林与山径路线插画">
-  <defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#dfeadd"/><stop offset="1" stop-color="#98b690"/></linearGradient></defs>
-  <rect width="640" height="360" fill="url(#bg)"/>
-  <path d="M0 230 121 86l90 107 89-142 114 155 76-101 150 138v117H0z" fill="#678a6a"/>
-  <path d="M0 274 113 156l99 81 81-113 103 137 84-83 160 105v77H0z" fill="#3f6c55"/>
-  <g fill="#1f4b3c"><path d="m68 264 35-96 34 96h-20v70H88v-70z"/><path d="m185 245 31-87 32 87h-18v89h-27v-89z"/><path d="m458 253 36-102 37 102h-21v81h-31v-81z"/><path d="m541 272 29-82 30 82h-17v62h-25v-62z"/></g>
-  <path d="M273 360c-8-54 9-92 55-113 35-16 47-48 44-90" fill="none" stroke="#e8d59d" stroke-width="18"/>
-  <path d="M273 360c-8-54 9-92 55-113 35-16 47-48 44-90" fill="none" stroke="#b59252" stroke-width="3" stroke-dasharray="3 12"/>
-</svg>

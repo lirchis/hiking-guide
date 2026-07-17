@@ -58,7 +58,7 @@
             <h2 id="catalog-title">路线目录</h2>
             <p id="data-edition" class="data-edition">资料更新于 2026.07.15</p>
           </div>
-          <p class="catalog__hint">插画用于快速区分路线环境，不代表现场实景</p>
+          <p class="catalog__hint">路线图片由前端按需调用维基百科与 Wikimedia Commons</p>
         </header>
 
         <details id="filter-panel" class="filter-panel" open>
@@ -153,7 +153,17 @@
 
     <dialog id="route-dialog" class="route-dialog">
       <button class="dialog-close" type="button" aria-label="关闭详情">×</button>
-      <img id="dialog-image" class="dialog__image" alt="" />
+      <div id="dialog-media" class="dialog__media" data-image-state="idle">
+        <img id="dialog-image" class="dialog__image" alt="" />
+        <span class="image-placeholder">正在从维基加载真实图片…</span>
+        <a
+          id="dialog-image-source"
+          class="image-source image-source--dialog"
+          target="_blank"
+          rel="noreferrer"
+          hidden
+        ></a>
+      </div>
       <div class="dialog__body">
         <div class="dialog__meta">
           <span id="dialog-scope" class="scope-pill"></span>
@@ -182,7 +192,16 @@
 
     <template id="route-card-template">
       <article class="route-row">
-        <img class="route-row__image" alt="" loading="lazy" decoding="async" />
+        <div class="route-row__media" data-image-state="idle">
+          <img class="route-row__image" alt="" decoding="async" />
+          <span class="image-placeholder">维基图片加载中…</span>
+          <a
+            class="image-source"
+            target="_blank"
+            rel="noreferrer"
+            hidden
+          >维基图像 ↗</a>
+        </div>
         <div class="route-row__main">
           <div class="route-row__topline">
             <span class="scope-pill"></span>

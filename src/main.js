@@ -17,43 +17,64 @@ const difficultyLabels = {
   expert: "专家",
 };
 
-const visualLabels = {
-  coast: "海岸与山脊",
-  forest: "森林与山径",
-  karst: "峰林与峡谷",
-  alpine: "高山与雪峰",
-  plateau: "高原与雪山",
-  urban: "城市绿道",
+const WIKIPEDIA_API = "https://zh.wikipedia.org/w/api.php";
+const COMMONS_API = "https://commons.wikimedia.org/w/api.php";
+const IMAGE_CACHE_PREFIX = "hiking-guide-wiki-image-v2:";
+const IMAGE_CACHE_TTL = 30 * 24 * 60 * 60 * 1000;
+const MAX_WIKI_REQUESTS = 4;
+
+const wikiSearchOverrides = {
+  "hk-sharp-peak-tai-long-wan": "蚺蛇尖",
+  "guangdong-chuandiding-compliant-route": "船底顶",
+  "hk-lantau-trail-sections-2-3": "鳳凰山 香港",
+  "guangxi-yangdi-xingping": "漓江 阳朔",
+  "shenzhen-kunpeng-trail-section-19": "大鹏半岛",
+  "hk-kai-kung-leng": "雞公嶺",
+  "hk-maclehose-trail": "麥理浩徑",
+  "guangdong-huidong-dananshan": "惠东 大南山",
+  "hk-pat-sin-leng-hok-tau": "八仙嶺",
+  "fujian-taimushan-loop": "太姥山",
+  "guangdong-danxia-longlao-xianglong-yangyuan": "丹霞山",
+  "fujian-wuyishan-tianyou-huxiao-yixiantian": "武夷山",
+  "hk-plover-cove-country-trail": "船灣淡水湖",
+  "hk-wilson-trail-sections-4-5": "衛奕信徑",
+  "guangxi-longji-rice-terraces": "龙脊梯田",
+  "hainan-wuzhishan-main-peak": "五指山 海南",
+  "hainan-jianfengling-tianchi-main-peak": "尖峰岭",
+  "guangxi-maoershan": "猫儿山 广西",
+  "guangdong-grand-canyon-loop": "广东大峡谷",
+  "hk-tai-mo-shan-ng-tung-chai": "大帽山",
+  "hk-dragons-back-big-wave-bay": "龍脊 香港",
+  "guangdong-luofushan-feiyunding": "罗浮山",
+  "guangdong-yingxi-peak-forest": "英西峰林",
+  "fujian-dongshan-sufengyan-yan-ya": "东山岛",
+  "shenzhen-wutongshan-taishanjian": "梧桐山",
+  "guangdong-conghua-tiantianding": "天堂顶 广东",
+  "guangzhou-baiyun-nanhu-maofengshan": "白云山 广州",
+  "guangdong-dinghushan-rainforest-loop": "鼎湖山",
+  "guangdong-chebaling-forest-trail": "车八岭",
+  "macau-coloane-trail": "路環",
+  "guangzhou-liupianshan": "广州 白云山",
+  "shenzhen-taojinshan-greenway": "深圳水库",
+  "sichuan-gongga-grand-loop": "贡嘎山",
+  "sichuan-yunnan-rock-line": "稻城亚丁",
+  "xinjiang-wusun-ancient-trail": "乌孙古道",
+  "xinjiang-langta-cv": "天山山脉",
+  "tibet-everest-east-kama-valley": "珠穆朗玛峰",
+  "yunnan-tibet-meili-outer-kora": "梅里雪山",
+  "xinjiang-bogda-grand-loop": "博格达峰",
+  "yunnan-yubeng-waterfall-ice-lake": "雨崩村",
+  "qinghai-nianbaoyuze-traverse": "年保玉则",
+  "anhui-huangshan-west-canyon-tiandu": "黄山",
+  "sichuan-siguniang-changping-bipeng": "四姑娘山",
+  "xinjiang-xiata-ancient-trail": "夏塔古道",
+  "tibet-shishapangma-south": "希夏邦马峰",
+  "tibet-mount-kailash-kora": "冈仁波齐峰",
+  "tibet-kula-kangri": "库拉岗日峰",
+  "qinghai-amnye-machen-kora": "阿尼玛卿山",
+  "sichuan-genyen-south": "格聂山",
+  "shaanxi-aotai-line": "太白山",
 };
-
-const coastRoutes = new Set([
-  "hk-sharp-peak-tai-long-wan",
-  "hk-lantau-trail-sections-2-3",
-  "shenzhen-kunpeng-trail-section-19",
-  "hk-maclehose-trail",
-  "hk-plover-cove-country-trail",
-  "hk-dragons-back-big-wave-bay",
-  "fujian-dongshan-sufengyan-yan-ya",
-  "macau-coloane-trail",
-]);
-
-const karstRoutes = new Set([
-  "guangxi-yangdi-xingping",
-  "fujian-taimushan-loop",
-  "guangdong-danxia-longlao-xianglong-yangyuan",
-  "fujian-wuyishan-tianyou-huxiao-yixiantian",
-  "guangxi-longji-rice-terraces",
-  "guangdong-grand-canyon-loop",
-  "guangdong-yingxi-peak-forest",
-  "anhui-huangshan-west-canyon-tiandu",
-]);
-
-const urbanRoutes = new Set([
-  "guangzhou-baiyun-nanhu-maofengshan",
-  "guangzhou-liupianshan",
-  "shenzhen-taojinshan-greenway",
-  "macau-coloane-trail",
-]);
 
 const elements = {
   search: document.querySelector("#search-input"),
@@ -80,37 +101,16 @@ const elements = {
 
 let trails = [];
 let datasetMeta = {};
+let trailsById = new Map();
+let activeWikiRequests = 0;
+const wikiRequestQueue = [];
+const wikiImagePromises = new Map();
 
 function difficultyBand(score) {
   if (score <= 2) return "easy";
   if (score <= 3.5) return "moderate";
   if (score <= 4.5) return "hard";
   return "expert";
-}
-
-function visualType(trail) {
-  if (coastRoutes.has(trail.id)) return "coast";
-  if (urbanRoutes.has(trail.id)) return "urban";
-  if (karstRoutes.has(trail.id)) return "karst";
-  if (["西藏", "青海"].some((region) => trail.region.includes(region))) {
-    return "plateau";
-  }
-  if (
-    ["四川", "云南", "新疆", "陕西"].some((region) =>
-      trail.region.includes(region),
-    )
-  ) {
-    return "alpine";
-  }
-  return "forest";
-}
-
-function visualForTrail(trail) {
-  const type = visualType(trail);
-  return {
-    src: `./assets/trails/${type}.svg`,
-    alt: `${trail.name} · ${visualLabels[type]}路线场景插画`,
-  };
 }
 
 function formatDate(dateString) {
@@ -120,6 +120,245 @@ function formatDate(dateString) {
 
 function normalizedText(value) {
   return String(value ?? "").trim().toLocaleLowerCase("zh-CN");
+}
+
+function cleanMetadata(value) {
+  if (!value) return "";
+  const documentFragment = new DOMParser().parseFromString(value, "text/html");
+  return documentFragment.body.textContent.replace(/\s+/g, " ").trim().slice(0, 90);
+}
+
+function routeSearchCandidates(trail) {
+  const cleanName = trail.name
+    .replace(/[（(][^（）()]*[）)]/g, "")
+    .replace(/第\d+[—–-]?\d*段/g, "")
+    .replace(/(全程|全景|环线|穿越线|组合|合规版本|核心段|登山栈道)/g, "")
+    .trim();
+
+  return [...new Set([
+    wikiSearchOverrides[trail.id],
+    cleanName,
+    `${trail.location} ${trail.region}`,
+    trail.location,
+    trail.region,
+  ].filter(Boolean))];
+}
+
+function readCachedWikiImage(trailId) {
+  try {
+    const cached = JSON.parse(localStorage.getItem(`${IMAGE_CACHE_PREFIX}${trailId}`));
+    if (
+      cached?.src?.startsWith("https://upload.wikimedia.org/") &&
+      Date.now() - cached.cachedAt < IMAGE_CACHE_TTL
+    ) {
+      return cached;
+    }
+  } catch {
+    return null;
+  }
+  return null;
+}
+
+function cacheWikiImage(trailId, imageData) {
+  try {
+    localStorage.setItem(
+      `${IMAGE_CACHE_PREFIX}${trailId}`,
+      JSON.stringify({ ...imageData, cachedAt: Date.now() }),
+    );
+  } catch {
+    // 图片仍可正常显示；缓存不可用时不影响页面。
+  }
+}
+
+function queueWikiRequest(task) {
+  return new Promise((resolve, reject) => {
+    wikiRequestQueue.push({ task, resolve, reject });
+    drainWikiRequestQueue();
+  });
+}
+
+function drainWikiRequestQueue() {
+  while (activeWikiRequests < MAX_WIKI_REQUESTS && wikiRequestQueue.length) {
+    const { task, resolve, reject } = wikiRequestQueue.shift();
+    activeWikiRequests += 1;
+    Promise.resolve()
+      .then(task)
+      .then(resolve, reject)
+      .finally(() => {
+        activeWikiRequests -= 1;
+        drainWikiRequestQueue();
+      });
+  }
+}
+
+function isLikelyPhoto(page) {
+  const fileName = page.pageimage ?? "";
+  return (
+    page.thumbnail?.source &&
+    /\.(?:jpe?g|webp)$/i.test(fileName) &&
+    !/(map|karte|location|route|logo|flag|emblem|diagram)/i.test(fileName)
+  );
+}
+
+function titleMatchesQuery(title, query) {
+  const normalizedTitle = normalizedText(title).replace(/[（）()\s]/g, "");
+  const terms = normalizedText(query)
+    .split(/[\s—–-]+/)
+    .map((term) => term.replace(/[（）()]/g, ""))
+    .filter((term) => term.length >= 2);
+  return terms.some((term) =>
+    normalizedTitle.includes(term) || normalizedTitle.includes(term.slice(0, 2)),
+  );
+}
+
+async function searchWikipediaImage(query) {
+  const params = new URLSearchParams({
+    action: "query",
+    generator: "search",
+    gsrsearch: query,
+    gsrnamespace: "0",
+    gsrlimit: "6",
+    prop: "pageimages|info",
+    piprop: "thumbnail|name",
+    pilicense: "free",
+    pithumbsize: "720",
+    inprop: "url",
+    format: "json",
+    formatversion: "2",
+    origin: "*",
+  });
+  const response = await fetch(`${WIKIPEDIA_API}?${params}`);
+  if (!response.ok) throw new Error(`Wikipedia HTTP ${response.status}`);
+  const data = await response.json();
+  return (data.query?.pages ?? [])
+    .filter((page) => isLikelyPhoto(page) && titleMatchesQuery(page.title, query))
+    .sort((a, b) => (a.index ?? 99) - (b.index ?? 99))[0];
+}
+
+async function fetchCommonsMetadata(fileName) {
+  const params = new URLSearchParams({
+    action: "query",
+    titles: `File:${fileName}`,
+    prop: "imageinfo",
+    iiprop: "url|extmetadata",
+    iiurlwidth: "720",
+    iiextmetadatalanguage: "zh",
+    iiextmetadatafilter: "Artist|Credit|LicenseShortName",
+    format: "json",
+    formatversion: "2",
+    origin: "*",
+  });
+  const response = await fetch(`${COMMONS_API}?${params}`);
+  if (!response.ok) throw new Error(`Commons HTTP ${response.status}`);
+  const data = await response.json();
+  return data.query?.pages?.[0]?.imageinfo?.[0];
+}
+
+async function fetchTrailWikiImage(trail) {
+  let page;
+  for (const query of routeSearchCandidates(trail)) {
+    page = await searchWikipediaImage(query);
+    if (page) break;
+  }
+  if (!page) return null;
+
+  let commons;
+  try {
+    commons = await fetchCommonsMetadata(page.pageimage);
+  } catch {
+    commons = null;
+  }
+
+  const metadata = commons?.extmetadata ?? {};
+  return {
+    src: commons?.thumburl ?? page.thumbnail.source,
+    sourceUrl: commons?.descriptionurl ?? page.fullurl,
+    credit: cleanMetadata(metadata.Artist?.value) || `维基百科“${page.title}”词条`,
+    license: cleanMetadata(metadata.LicenseShortName?.value) || "授权见原图页面",
+    articleTitle: page.title,
+  };
+}
+
+function getWikiImage(trail) {
+  const cached = readCachedWikiImage(trail.id);
+  if (cached) return Promise.resolve(cached);
+  if (wikiImagePromises.has(trail.id)) return wikiImagePromises.get(trail.id);
+
+  const request = queueWikiRequest(() => fetchTrailWikiImage(trail))
+    .then((imageData) => {
+      if (imageData) cacheWikiImage(trail.id, imageData);
+      return imageData;
+    })
+    .catch(() => null);
+  wikiImagePromises.set(trail.id, request);
+  return request;
+}
+
+function applyWikiImage(media, trail, imageData) {
+  if (!media?.isConnected || media.dataset.trailId !== trail.id) return;
+  const image = media.querySelector("img");
+  const placeholder = media.querySelector(".image-placeholder");
+  const sourceLink = media.querySelector(".image-source");
+
+  if (!imageData) {
+    media.dataset.imageState = "error";
+    image.removeAttribute("src");
+    image.alt = "";
+    placeholder.textContent = "维基暂未找到匹配实景";
+    sourceLink.hidden = true;
+    return;
+  }
+
+  image.onload = () => {
+    media.dataset.imageState = "ready";
+  };
+  image.onerror = () => {
+    media.dataset.imageState = "error";
+    placeholder.textContent = "维基图片暂时无法加载";
+    sourceLink.hidden = true;
+  };
+  image.alt = `${trail.name}相关地点实景，来自维基百科“${imageData.articleTitle}”词条`;
+  image.src = imageData.src;
+  sourceLink.href = imageData.sourceUrl;
+  sourceLink.title = `${imageData.credit} · ${imageData.license}`;
+  sourceLink.setAttribute("aria-label", `查看${trail.name}图片的维基来源`);
+  sourceLink.textContent = media.id === "dialog-media"
+    ? `图片：${imageData.credit} · ${imageData.license} ↗`
+    : "维基图像 ↗";
+  sourceLink.hidden = false;
+}
+
+function loadWikiImageInto(media, trail) {
+  media.dataset.imageState = "loading";
+  getWikiImage(trail).then((imageData) => applyWikiImage(media, trail, imageData));
+}
+
+const routeImageObserver = "IntersectionObserver" in window
+  ? new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          routeImageObserver.unobserve(entry.target);
+          const trail = trailsById.get(entry.target.dataset.trailId);
+          if (trail) loadWikiImageInto(entry.target, trail);
+        }
+      },
+      { rootMargin: "500px 0px" },
+    )
+  : null;
+
+function observeRouteImages() {
+  const mediaElements = elements.list.querySelectorAll(".route-row__media");
+  if (!routeImageObserver) {
+    for (const media of mediaElements) {
+      const trail = trailsById.get(media.dataset.trailId);
+      if (trail) loadWikiImageInto(media, trail);
+    }
+    return;
+  }
+
+  routeImageObserver.disconnect();
+  for (const media of mediaElements) routeImageObserver.observe(media);
 }
 
 function matchesSearch(trail, query) {
@@ -170,19 +409,9 @@ function createRouteRow(trail) {
   const fragment = elements.template.content.cloneNode(true);
   const row = fragment.querySelector(".route-row");
   const band = difficultyBand(trail.difficultyScore);
-  const visual = visualForTrail(trail);
 
   row.dataset.status = trail.status;
-  const image = fragment.querySelector(".route-row__image");
-  image.src = visual.src;
-  image.alt = visual.alt;
-  image.addEventListener(
-    "error",
-    () => {
-      image.src = "./assets/trails/forest.svg";
-    },
-    { once: true },
-  );
+  fragment.querySelector(".route-row__media").dataset.trailId = trail.id;
 
   fragment.querySelector(".scope-pill").textContent = scopeLabels[trail.scope];
   setStatusPill(fragment.querySelector(".status-pill"), trail.status);
@@ -255,6 +484,7 @@ function render() {
   );
 
   elements.list.replaceChildren(...visibleTrails.map(createRouteRow));
+  observeRouteImages();
   elements.count.textContent = `显示 ${visibleTrails.length} / ${trails.length} 条路线`;
   const activeFilterCount = [
     Boolean(filters.query),
@@ -299,10 +529,14 @@ function restoreFiltersFromUrl() {
 
 function openRouteDialog(trail) {
   const band = difficultyBand(trail.difficultyScore);
-  const visual = visualForTrail(trail);
-  const image = document.querySelector("#dialog-image");
-  image.src = visual.src;
-  image.alt = visual.alt;
+  const dialogMedia = document.querySelector("#dialog-media");
+  dialogMedia.dataset.trailId = trail.id;
+  dialogMedia.querySelector("img").removeAttribute("src");
+  dialogMedia.querySelector("img").alt = "";
+  dialogMedia.querySelector(".image-source").hidden = true;
+  dialogMedia.querySelector(".image-placeholder").textContent =
+    "正在从维基加载真实图片…";
+  loadWikiImageInto(dialogMedia, trail);
   document.querySelector("#dialog-scope").textContent = scopeLabels[trail.scope];
   setStatusPill(document.querySelector("#dialog-status"), trail.status);
   document.querySelector("#dialog-location").textContent =
@@ -347,6 +581,7 @@ async function loadTrails() {
     }
 
     trails = data.trails;
+    trailsById = new Map(trails.map((trail) => [trail.id, trail]));
     datasetMeta = data.meta;
     restoreFiltersFromUrl();
     renderDatasetMeta();

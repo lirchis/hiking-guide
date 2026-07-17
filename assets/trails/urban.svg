@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="城市绿道路线插画">
-  <defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#d9ece8"/><stop offset="1" stop-color="#f2e5c7"/></linearGradient></defs>
-  <rect width="640" height="360" fill="url(#sky)"/>
-  <g fill="#7fa09a" opacity=".75"><path d="M50 147h53v135H50zM118 105h70v177h-70zM204 164h46v118h-46zM268 83h79v199h-79zM363 139h55v143h-55zM438 114h74v168h-74zM530 173h54v109h-54z"/><path d="M284 52h46v31h-46z"/></g>
-  <path d="M0 262c91-38 153-14 215 15 63 29 114 19 188-13 75-33 150-29 237 13v83H0z" fill="#4f7f5f"/>
-  <g fill="#245441"><path d="m67 279 23-65 24 65H99v51H80v-51zM176 290l27-75 27 75h-16v40h-22v-40zM463 286l25-70 25 70h-15v44h-20v-44zM547 281l21-59 22 59h-13v49h-18v-49z"/></g>
-  <path d="M0 329c117-26 203-30 305-8 105 23 202 24 335-6" fill="none" stroke="#e8d396" stroke-width="25"/>
-  <path d="M0 329c117-26 203-30 305-8 105 23 202 24 335-6" fill="none" stroke="#507263" stroke-width="3" stroke-dasharray="10 12"/>
-</svg>
