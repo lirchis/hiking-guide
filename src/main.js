@@ -17,6 +17,44 @@ const difficultyLabels = {
   expert: "专家",
 };
 
+const visualLabels = {
+  coast: "海岸与山脊",
+  forest: "森林与山径",
+  karst: "峰林与峡谷",
+  alpine: "高山与雪峰",
+  plateau: "高原与雪山",
+  urban: "城市绿道",
+};
+
+const coastRoutes = new Set([
+  "hk-sharp-peak-tai-long-wan",
+  "hk-lantau-trail-sections-2-3",
+  "shenzhen-kunpeng-trail-section-19",
+  "hk-maclehose-trail",
+  "hk-plover-cove-country-trail",
+  "hk-dragons-back-big-wave-bay",
+  "fujian-dongshan-sufengyan-yan-ya",
+  "macau-coloane-trail",
+]);
+
+const karstRoutes = new Set([
+  "guangxi-yangdi-xingping",
+  "fujian-taimushan-loop",
+  "guangdong-danxia-longlao-xianglong-yangyuan",
+  "fujian-wuyishan-tianyou-huxiao-yixiantian",
+  "guangxi-longji-rice-terraces",
+  "guangdong-grand-canyon-loop",
+  "guangdong-yingxi-peak-forest",
+  "anhui-huangshan-west-canyon-tiandu",
+]);
+
+const urbanRoutes = new Set([
+  "guangzhou-baiyun-nanhu-maofengshan",
+  "guangzhou-liupianshan",
+  "shenzhen-taojinshan-greenway",
+  "macau-coloane-trail",
+]);
+
 const elements = {
   search: document.querySelector("#search-input"),
   scope: document.querySelector("#scope-filter"),
@@ -29,7 +67,10 @@ const elements = {
   empty: document.querySelector("#empty-state"),
   template: document.querySelector("#route-card-template"),
   edition: document.querySelector("#data-edition"),
+  filterPanel: document.querySelector("#filter-panel"),
+  mobileFilterSummary: document.querySelector("#mobile-filter-summary"),
   stats: {
+    headerTotal: document.querySelector("#header-total"),
     total: document.querySelector("#stat-total"),
     available: document.querySelector("#stat-available"),
     topRated: document.querySelector("#stat-top-rated"),
@@ -45,6 +86,31 @@ function difficultyBand(score) {
   if (score <= 3.5) return "moderate";
   if (score <= 4.5) return "hard";
   return "expert";
+}
+
+function visualType(trail) {
+  if (coastRoutes.has(trail.id)) return "coast";
+  if (urbanRoutes.has(trail.id)) return "urban";
+  if (karstRoutes.has(trail.id)) return "karst";
+  if (["西藏", "青海"].some((region) => trail.region.includes(region))) {
+    return "plateau";
+  }
+  if (
+    ["四川", "云南", "新疆", "陕西"].some((region) =>
+      trail.region.includes(region),
+    )
+  ) {
+    return "alpine";
+  }
+  return "forest";
+}
+
+function visualForTrail(trail) {
+  const type = visualType(trail);
+  return {
+    src: `./assets/trails/${type}.svg`,
+    alt: `${trail.name} · ${visualLabels[type]}路线场景插画`,
+  };
 }
 
 function formatDate(dateString) {
@@ -75,7 +141,6 @@ function matchesSearch(trail, query) {
 function sortTrails(items, mode) {
   const sorted = [...items];
   const compareName = (a, b) => a.name.localeCompare(b.name, "zh-CN");
-
   const comparators = {
     quality: (a, b) =>
       b.routeScore - a.routeScore ||
@@ -101,19 +166,33 @@ function setStatusPill(element, status) {
   element.title = meta.description;
 }
 
-function createRouteCard(trail) {
+function createRouteRow(trail) {
   const fragment = elements.template.content.cloneNode(true);
-  const card = fragment.querySelector(".route-card");
+  const row = fragment.querySelector(".route-row");
   const band = difficultyBand(trail.difficultyScore);
+  const visual = visualForTrail(trail);
 
-  card.dataset.status = trail.status;
+  row.dataset.status = trail.status;
+  const image = fragment.querySelector(".route-row__image");
+  image.src = visual.src;
+  image.alt = visual.alt;
+  image.addEventListener(
+    "error",
+    () => {
+      image.src = "./assets/trails/forest.svg";
+    },
+    { once: true },
+  );
+
   fragment.querySelector(".scope-pill").textContent = scopeLabels[trail.scope];
   setStatusPill(fragment.querySelector(".status-pill"), trail.status);
-  fragment.querySelector(".route-card__location").textContent =
+  fragment.querySelector(".route-row__location").textContent =
     `${trail.region} · ${trail.location}`;
-  fragment.querySelector(".route-card__name").textContent = trail.name;
-  fragment.querySelector(".route-card__experience").textContent = trail.experience;
+  fragment.querySelector(".route-row__name").textContent = trail.name;
+  fragment.querySelector(".route-row__experience").textContent = trail.experience;
+  fragment.querySelector(".route-row__notice").textContent = trail.notice;
   fragment.querySelector('[data-field="distance"]').textContent = trail.distanceText;
+  fragment.querySelector('[data-field="duration"]').textContent = trail.durationText;
 
   const difficulty = fragment.querySelector('[data-field="difficulty"]');
   difficulty.textContent = `${trail.difficultyScore}/5 · ${difficultyLabels[band]}`;
@@ -124,10 +203,10 @@ function createRouteCard(trail) {
     trail.sceneryScore.toFixed(1);
   fragment.querySelector('[data-field="quality"]').textContent =
     trail.routeScore.toFixed(1);
-  fragment.querySelector(".route-card__notice").textContent = trail.notice;
-  fragment
-    .querySelector(".route-card__action")
-    .addEventListener("click", () => openRouteDialog(trail));
+
+  const action = fragment.querySelector(".route-row__action");
+  action.setAttribute("aria-label", `查看${trail.name}详情`);
+  action.addEventListener("click", () => openRouteDialog(trail));
 
   return fragment;
 }
@@ -175,9 +254,18 @@ function render() {
     filters.sort,
   );
 
-  const cards = visibleTrails.map(createRouteCard);
-  elements.list.replaceChildren(...cards);
+  elements.list.replaceChildren(...visibleTrails.map(createRouteRow));
   elements.count.textContent = `显示 ${visibleTrails.length} / ${trails.length} 条路线`;
+  const activeFilterCount = [
+    Boolean(filters.query),
+    filters.scope !== "all",
+    filters.difficulty !== "all",
+    filters.status !== "all",
+    filters.sort !== "quality",
+  ].filter(Boolean).length;
+  elements.mobileFilterSummary.textContent = activeFilterCount
+    ? `${visibleTrails.length} 条 · ${activeFilterCount} 项已选`
+    : `${visibleTrails.length} 条 · 全部路线`;
   elements.empty.hidden = visibleTrails.length > 0;
   syncUrl(filters);
 }
@@ -211,6 +299,10 @@ function restoreFiltersFromUrl() {
 
 function openRouteDialog(trail) {
   const band = difficultyBand(trail.difficultyScore);
+  const visual = visualForTrail(trail);
+  const image = document.querySelector("#dialog-image");
+  image.src = visual.src;
+  image.alt = visual.alt;
   document.querySelector("#dialog-scope").textContent = scopeLabels[trail.scope];
   setStatusPill(document.querySelector("#dialog-status"), trail.status);
   document.querySelector("#dialog-location").textContent =
@@ -232,14 +324,16 @@ function openRouteDialog(trail) {
 }
 
 function renderDatasetMeta() {
-  elements.stats.total.textContent = datasetMeta.includedCount;
+  const total = datasetMeta.includedCount;
+  elements.stats.headerTotal.textContent = total;
+  elements.stats.total.textContent = total;
   elements.stats.available.textContent = trails.filter(
     (trail) => trail.status === "available",
   ).length;
   elements.stats.topRated.textContent = trails.filter(
     (trail) => trail.routeScore >= 4.8,
   ).length;
-  elements.edition.textContent = `资料更新于 ${formatDate(datasetMeta.updatedAt)} · 已整理 ${datasetMeta.includedCount}/${datasetMeta.totalCount}`;
+  elements.edition.textContent = `更新于 ${formatDate(datasetMeta.updatedAt)} · 已整理 ${total}/${datasetMeta.totalCount}`;
 }
 
 async function loadTrails() {
@@ -276,14 +370,20 @@ for (const element of [
 }
 
 elements.reset.addEventListener("click", resetFilters);
-document
-  .querySelector("[data-reset-filters]")
-  .addEventListener("click", resetFilters);
+document.querySelector("[data-reset-filters]").addEventListener("click", resetFilters);
 document
   .querySelector(".dialog-close")
   .addEventListener("click", () => elements.dialog.close());
 elements.dialog.addEventListener("click", (event) => {
   if (event.target === elements.dialog) elements.dialog.close();
 });
+
+const mobileQuery = window.matchMedia("(max-width: 720px)");
+function setFilterPanelMode(event = mobileQuery) {
+  if (event.matches) elements.filterPanel.removeAttribute("open");
+  else elements.filterPanel.setAttribute("open", "");
+}
+setFilterPanelMode();
+mobileQuery.addEventListener("change", setFilterPanelMode);
 
 loadTrails();

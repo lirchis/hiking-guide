@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="山野路线探索器：从广东周边到全国经典路线，按难度、距离、路线质量与当前状态筛选。"
+      content="山野路线探索器：50 条广东周边与全国经典徒步路线，按难度、距离、路线质量与当前状态快速筛选。"
     />
-    <meta name="theme-color" content="#152820" />
+    <meta name="theme-color" content="#17352b" />
     <title>山野路线探索器 · Hiking Guide</title>
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="./src/styles.css" />
@@ -18,145 +18,124 @@
         <span class="brand__mark" aria-hidden="true">△</span>
         <span>山野路线探索器<small>HIKING GUIDE</small></span>
       </a>
-      <a
-        class="source-link"
-        href="https://my.feishu.cn/docx/HoFBdHWPKoBTwXx1S7BcXwG3nod"
-        target="_blank"
-        rel="noreferrer"
-      >
-        查看编辑清单 <span aria-hidden="true">↗</span>
-      </a>
+      <div class="header-meta">
+        <span><strong id="header-total">50</strong> 条路线</span>
+        <a
+          class="source-link"
+          href="https://my.feishu.cn/docx/HoFBdHWPKoBTwXx1S7BcXwG3nod"
+          target="_blank"
+          rel="noreferrer"
+        >
+          编辑清单 <span aria-hidden="true">↗</span>
+        </a>
+      </div>
     </header>
 
     <main>
-      <section class="hero" aria-labelledby="hero-title">
-        <svg
-          class="hero__contours"
-          viewBox="0 0 1000 620"
-          fill="none"
-          aria-hidden="true"
-        >
-          <path d="M-40 514C69 385 180 572 306 444c107-109 154-315 313-271 184 52 144 288 381 232" />
-          <path d="M-46 559C81 424 183 615 331 475c111-105 170-286 307-252 164 40 163 258 386 232" />
-          <path d="M-55 604C95 462 203 657 361 510c116-108 176-247 301-219 143 32 168 231 378 211" />
-          <path d="M228-28c35 143-48 209 2 311 56 114 226 90 254 222 13 61-9 109-30 150" />
-          <path d="M291-39c27 128-45 198 7 292 57 102 218 82 259 208 23 70-3 134-28 178" />
-        </svg>
-
-        <div class="hero__copy">
-          <p class="kicker"><span></span> 50 / 100 · FIRST RELEASE</p>
-          <h1 id="hero-title">不是每条经典路线，<br />今天都值得出发。</h1>
-          <p class="hero__summary">
-            把路线价值和当前可走性分开。先比较景观、强度与季节，再核对开放、报备和客观风险。
+      <section class="intro" aria-labelledby="page-title">
+        <div class="intro__copy">
+          <p class="eyebrow">徒步路线资料库 · 第一期 50 / 100</p>
+          <h1 id="page-title">更快找到值得认真规划的路线</h1>
+          <p>
+            路线价值与当前可走性分开呈现。先比较景观、强度和季节，再核对开放、报备与客观风险。
           </p>
-          <a class="hero__cta" href="#catalog">
-            开始选路线 <span aria-hidden="true">↓</span>
-          </a>
         </div>
-
-        <dl class="hero__stats" aria-label="路线数据概览">
-          <div>
-            <dt>已整理</dt>
-            <dd><span id="stat-total">50</span><small>条路线</small></dd>
-          </div>
-          <div>
-            <dt>当前可计划</dt>
-            <dd><span id="stat-available">—</span><small>仍需行前复核</small></dd>
-          </div>
-          <div>
-            <dt>高分路线</dt>
-            <dd><span id="stat-top-rated">—</span><small>质量 ≥ 4.8</small></dd>
-          </div>
+        <dl class="intro__stats" aria-label="路线数据概览">
+          <div><dt>已整理</dt><dd><span id="stat-total">50</span> 条</dd></div>
+          <div><dt>可计划</dt><dd><span id="stat-available">—</span> 条</dd></div>
+          <div><dt>高质量</dt><dd><span id="stat-top-rated">—</span> 条</dd></div>
         </dl>
       </section>
 
-      <section class="editorial-note" aria-label="使用提醒">
-        <span class="editorial-note__icon" aria-hidden="true">!</span>
-        <div>
-          <strong>这是一份选择工具，不是实时路况。</strong>
-          <p>
-            出发前 48 小时仍需确认官方公告、天气、森林火险、许可与交通。标记为“资料收录”或“明确关闭”的路线不进入实际行程。
-          </p>
-        </div>
-      </section>
+      <aside class="safety-note" aria-label="使用提醒">
+        <strong>行前复核</strong>
+        <p>本站不是实时路况。出发前 48 小时请确认官方公告、天气、森林火险、许可与交通。</p>
+      </aside>
 
       <section id="catalog" class="catalog" aria-labelledby="catalog-title">
         <header class="catalog__header">
           <div>
-            <p class="kicker kicker--dark"><span></span> ROUTE CATALOG</p>
-            <h2 id="catalog-title">挑一条，认真做功课</h2>
+            <h2 id="catalog-title">路线目录</h2>
+            <p id="data-edition" class="data-edition">资料更新于 2026.07.15</p>
           </div>
-          <p id="data-edition" class="data-edition">资料更新于 2026-07-15</p>
+          <p class="catalog__hint">插画用于快速区分路线环境，不代表现场实景</p>
         </header>
 
-        <div class="filter-panel" aria-label="路线筛选">
-          <label class="search-field">
-            <span>搜索</span>
-            <span class="input-wrap">
-              <span aria-hidden="true">⌕</span>
-              <input
-                id="search-input"
-                type="search"
-                placeholder="路线、地区或体验关键词"
-                autocomplete="off"
-              />
-            </span>
-          </label>
+        <details id="filter-panel" class="filter-panel" open>
+          <summary>
+            <span>筛选与排序</span>
+            <span id="mobile-filter-summary">全部路线</span>
+          </summary>
+          <div class="filter-grid" aria-label="路线筛选">
+            <label class="search-field">
+              <span>搜索</span>
+              <span class="input-wrap">
+                <span aria-hidden="true">⌕</span>
+                <input
+                  id="search-input"
+                  type="search"
+                  placeholder="路线、地区或体验"
+                  autocomplete="off"
+                />
+              </span>
+            </label>
 
-          <label>
-            <span>区域</span>
-            <select id="scope-filter">
-              <option value="all">全部区域</option>
-              <option value="greater-bay-area">广东及周边</option>
-              <option value="china">全国精选</option>
-            </select>
-          </label>
+            <label>
+              <span>区域</span>
+              <select id="scope-filter">
+                <option value="all">全部区域</option>
+                <option value="greater-bay-area">广东及周边</option>
+                <option value="china">全国精选</option>
+              </select>
+            </label>
 
-          <label>
-            <span>难度</span>
-            <select id="difficulty-filter">
-              <option value="all">全部难度</option>
-              <option value="easy">轻松 · 1—2</option>
-              <option value="moderate">进阶 · 2.5—3.5</option>
-              <option value="hard">困难 · 4—4.5</option>
-              <option value="expert">专家 · 5</option>
-            </select>
-          </label>
+            <label>
+              <span>难度</span>
+              <select id="difficulty-filter">
+                <option value="all">全部难度</option>
+                <option value="easy">轻松 · 1—2</option>
+                <option value="moderate">进阶 · 2.5—3.5</option>
+                <option value="hard">困难 · 4—4.5</option>
+                <option value="expert">专家 · 5</option>
+              </select>
+            </label>
 
-          <label>
-            <span>当前状态</span>
-            <select id="status-filter">
-              <option value="all">全部状态</option>
-              <option value="available">可计划</option>
-              <option value="verify">先核实</option>
-              <option value="reference">资料收录</option>
-              <option value="closed">明确关闭</option>
-            </select>
-          </label>
+            <label>
+              <span>状态</span>
+              <select id="status-filter">
+                <option value="all">全部状态</option>
+                <option value="available">可计划</option>
+                <option value="verify">先核实</option>
+                <option value="reference">资料收录</option>
+                <option value="closed">明确关闭</option>
+              </select>
+            </label>
 
-          <label>
-            <span>排序</span>
-            <select id="sort-select">
-              <option value="quality">路线质量</option>
-              <option value="scenery">景观评分</option>
-              <option value="difficulty-asc">难度由低到高</option>
-              <option value="distance-asc">距离由短到长</option>
-            </select>
-          </label>
+            <label>
+              <span>排序</span>
+              <select id="sort-select">
+                <option value="quality">路线质量</option>
+                <option value="scenery">景观评分</option>
+                <option value="difficulty-asc">难度由低到高</option>
+                <option value="distance-asc">距离由短到长</option>
+              </select>
+            </label>
 
-          <button id="reset-filters" class="reset-button" type="button">重置</button>
-        </div>
+            <button id="reset-filters" class="reset-button" type="button">重置</button>
+          </div>
+        </details>
 
         <div class="results-bar" aria-live="polite">
           <p id="route-count">正在加载路线…</p>
-          <p class="results-bar__legend">
-            <span><i class="legend-dot legend-dot--available"></i>可计划</span>
-            <span><i class="legend-dot legend-dot--verify"></i>先核实</span>
-            <span><i class="legend-dot legend-dot--reference"></i>仅资料</span>
+          <p class="results-bar__legend" aria-label="状态图例">
+            <span><i data-status="available"></i>可计划</span>
+            <span><i data-status="verify"></i>先核实</span>
+            <span><i data-status="reference"></i>仅资料</span>
+            <span><i data-status="closed"></i>关闭</span>
           </p>
         </div>
 
-        <section id="route-list" class="route-grid" aria-label="徒步路线"></section>
+        <section id="route-list" class="route-list" aria-label="徒步路线"></section>
 
         <section id="empty-state" class="empty-state" hidden>
           <span aria-hidden="true">△</span>
@@ -174,53 +153,59 @@
 
     <dialog id="route-dialog" class="route-dialog">
       <button class="dialog-close" type="button" aria-label="关闭详情">×</button>
-      <div class="dialog__meta">
-        <span id="dialog-scope"></span>
-        <span id="dialog-status" class="status-pill"></span>
+      <img id="dialog-image" class="dialog__image" alt="" />
+      <div class="dialog__body">
+        <div class="dialog__meta">
+          <span id="dialog-scope" class="scope-pill"></span>
+          <span id="dialog-status" class="status-pill"></span>
+        </div>
+        <p id="dialog-location" class="dialog__location"></p>
+        <h2 id="dialog-title"></h2>
+        <p id="dialog-experience" class="dialog__lead"></p>
+        <dl class="dialog__metrics">
+          <div><dt>距离</dt><dd id="dialog-distance"></dd></div>
+          <div><dt>用时</dt><dd id="dialog-duration"></dd></div>
+          <div><dt>难度</dt><dd id="dialog-difficulty"></dd></div>
+          <div><dt>最佳季节</dt><dd id="dialog-season"></dd></div>
+          <div><dt>景观</dt><dd id="dialog-scenery"></dd></div>
+          <div><dt>路线质量</dt><dd id="dialog-quality"></dd></div>
+        </dl>
+        <section class="dialog__notice">
+          <p>当前状态 / 提醒</p>
+          <strong id="dialog-notice"></strong>
+        </section>
+        <a id="dialog-source" class="dialog__source" target="_blank" rel="noreferrer">
+          查看资料来源 <span aria-hidden="true">↗</span>
+        </a>
       </div>
-      <p id="dialog-location" class="dialog__location"></p>
-      <h2 id="dialog-title"></h2>
-      <p id="dialog-experience" class="dialog__lead"></p>
-      <dl class="dialog__metrics">
-        <div><dt>距离</dt><dd id="dialog-distance"></dd></div>
-        <div><dt>用时</dt><dd id="dialog-duration"></dd></div>
-        <div><dt>难度</dt><dd id="dialog-difficulty"></dd></div>
-        <div><dt>最佳季节</dt><dd id="dialog-season"></dd></div>
-        <div><dt>景观</dt><dd id="dialog-scenery"></dd></div>
-        <div><dt>路线质量</dt><dd id="dialog-quality"></dd></div>
-      </dl>
-      <section class="dialog__notice">
-        <p>当前状态 / 提醒</p>
-        <strong id="dialog-notice"></strong>
-      </section>
-      <a id="dialog-source" class="dialog__source" target="_blank" rel="noreferrer">
-        查看资料来源 <span aria-hidden="true">↗</span>
-      </a>
     </dialog>
 
     <template id="route-card-template">
-      <article class="route-card">
-        <div class="route-card__topline">
-          <span class="scope-pill"></span>
-          <span class="status-pill"></span>
+      <article class="route-row">
+        <img class="route-row__image" alt="" loading="lazy" decoding="async" />
+        <div class="route-row__main">
+          <div class="route-row__topline">
+            <span class="scope-pill"></span>
+            <span class="status-pill"></span>
+            <span class="route-row__location"></span>
+          </div>
+          <h3 class="route-row__name"></h3>
+          <p class="route-row__experience"></p>
+          <p class="route-row__notice"></p>
         </div>
-        <p class="route-card__location"></p>
-        <h3 class="route-card__name"></h3>
-        <p class="route-card__experience"></p>
-        <dl class="route-card__metrics">
+        <dl class="route-row__metrics">
           <div><dt>距离</dt><dd data-field="distance"></dd></div>
+          <div><dt>用时</dt><dd data-field="duration"></dd></div>
           <div><dt>难度</dt><dd data-field="difficulty"></dd></div>
           <div><dt>季节</dt><dd data-field="season"></dd></div>
         </dl>
-        <div class="score-row">
-          <p>景观 <strong data-field="scenery"></strong></p>
-          <span></span>
-          <p>路线质量 <strong data-field="quality"></strong></p>
+        <div class="route-row__score">
+          <p><span>景观</span><strong data-field="scenery"></strong></p>
+          <p><span>质量</span><strong data-field="quality"></strong></p>
+          <button class="route-row__action" type="button" aria-label="查看路线详情">
+            详情 <span aria-hidden="true">›</span>
+          </button>
         </div>
-        <p class="route-card__notice"></p>
-        <button class="route-card__action" type="button">
-          查看路线提醒 <span aria-hidden="true">↗</span>
-        </button>
       </article>
     </template>
 
